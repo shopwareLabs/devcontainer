@@ -24,6 +24,7 @@ RUN <<EOF
         nodejs-22 \
         npm \
         git \
+        sudo-rs \
         composer \
         php-${PHP_VERSION} \
         php-${PHP_VERSION}-fileinfo \
@@ -67,6 +68,8 @@ RUN <<EOF
     chown -R www-data:www-data /var/www/html /var/lib/mariadb/ /var/tmp /run/mysqld/
 
     ldconfig
+
+    echo 'www-data ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 EOF
 
 COPY rootfs /
