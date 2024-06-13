@@ -55,7 +55,6 @@ RUN <<EOF
         php-${PHP_VERSION}-opcache \
         php-${PHP_VERSION}-zstd \
         php-${PHP_VERSION}-redis \
-        php-${PHP_VERSION}-imagick \
         openssl-config \
         mariadb-11.2 \
         jq

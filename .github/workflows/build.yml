@@ -89,7 +89,7 @@ jobs:
 
       - uses: docker/build-push-action@v5
         with:
-          tags: quay.io/friendsofshopware/devcontainer:${{ matrix.swVersion }}-${{ matrix.phpVersion }}
+          tags: quay.io/friendsofshopware/devcontainer:${{ matrix.tag }}-${{ matrix.phpVersion }}
           platforms: linux/amd64,linux/arm64
           file: Dockerfile
           build-args: |
