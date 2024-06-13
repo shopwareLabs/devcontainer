@@ -8,6 +8,7 @@ RUN <<EOF
     export COMPOSER_ALLOW_SUPERUSER=1
     shopware-cli project create /shop ${SHOPWARE_VERSION}
     shopware-cli project ci /shop
+    composer -d /shop require shopware/dev-tools
 EOF
 
 COPY --chmod=555 <<EOF /shop/config/packages/override.yaml
@@ -28,6 +29,7 @@ EOF
 FROM quay.io/friendsofshopware/devcontainer:base-${PHP_VERSION}
 
 COPY --from=creation --chown=www-data /shop /var/www/html
+COPY --from=friendsofshopware/shopware-cli:latest-php-${PHP_VERSION}  /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli
 
 RUN <<EOF
     set -e
