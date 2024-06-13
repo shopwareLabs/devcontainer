@@ -32,7 +32,7 @@ COPY --from=creation --chown=www-data /shop /var/www/html
 RUN <<EOF
     set -e
     /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=www-data &
-    sleep 2
+    until mariadb-admin ping; do sleep 1; done
 
     php bin/console system:install --create-database --force
     mariadb -uroot -proot shopware -e "DELETE FROM sales_channel WHERE id = 0x98432def39fc4624b33213a56b8c944d"
