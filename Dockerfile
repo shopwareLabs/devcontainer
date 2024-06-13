@@ -29,7 +29,7 @@ EOF
 FROM quay.io/friendsofshopware/devcontainer:base-${PHP_VERSION}
 
 COPY --from=creation --chown=www-data /shop /var/www/html
-COPY --from=friendsofshopware/shopware-cli:latest-php-${PHP_VERSION}  /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli
+COPY --from=friendsofshopware/shopware-cli /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli
 
 RUN <<EOF
     set -e
