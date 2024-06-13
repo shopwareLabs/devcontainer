@@ -17,6 +17,7 @@ RUN <<EOF
     apk add --no-cache \
         libstdc++ \
         bash \
+        bash-completion \
         valkey \
         valkey-cli \
         curl \
