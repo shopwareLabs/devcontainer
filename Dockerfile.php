@@ -63,7 +63,9 @@ RUN <<EOF
     mkdir -p /var/tmp /run/mysqld
     mariadb-install-db --datadir=/var/lib/mariadb --user=root
     /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=root &
-    sleep 2
+
+    until mariadb-admin ping; do sleep 1; done
+
     mariadb-admin --user=root password 'root'
     chown -R www-data:www-data /var/www/html /var/lib/mariadb/ /var/tmp /run/mysqld/
 
