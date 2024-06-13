@@ -25,7 +25,7 @@ shopware:
 EOF
 
 
-FROM ghcr.io/friendsofshopware/devcontainer:base-${PHP_VERSION}
+FROM quay.io/friendsofshopware/devcontainer:base-${PHP_VERSION}
 
 COPY --from=creation --chown=www-data /shop /var/www/html
 
