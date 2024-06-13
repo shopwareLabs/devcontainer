@@ -30,7 +30,7 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v4
 
-        - name: Login into Github Docker Registery
+        - name: Login into Docker Registery
           run: echo "${{ secrets.QUAY_ROBOT_PASSWORD }}" | docker login quay.io -u friendsofshopware+devcontainer_gh_actions --password-stdin
 
         - name: Install and configure Namespace CLI
@@ -46,5 +46,52 @@ jobs:
             file: Dockerfile.php
             build-args: |
               PHP_VERSION=${{ matrix.version }}
+            push: true
+            provenance: false
+
+    generate-matrix:
+      runs-on: ubuntu-latest
+      outputs:
+        matrix: ${{ steps.generate-matrix.outputs.matrix }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Generate Matrix
+          id: generate-matrix
+          run: |
+            MATRIX=$(node matrix.mjs)
+            echo "matrix<<EOF" >> $GITHUB_OUTPUT
+            echo "$MATRIX" >> $GITHUB_OUTPUT
+            echo 'EOF' >> $GITHUB_OUTPUT
+
+    build-shopware:
+      runs-on: ubuntu-latest
+      needs: generate-matrix
+      strategy:
+        fail-fast: false
+        matrix:
+          include: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        
+        - name: Login into Docker Registery
+          run: echo "${{ secrets.QUAY_ROBOT_PASSWORD }}" | docker login quay.io -u friendsofshopware+devcontainer_gh_actions --password-stdin
+
+        - name: Install and configure Namespace CLI
+          uses: namespacelabs/nscloud-setup@v0
+
+        - name: Configure Namespace powered Buildx
+          uses: namespacelabs/nscloud-setup-buildx-action@v0
+
+        - uses: docker/build-push-action@v5
+          with:
+            tags: quay.io/friendsofshopware/devcontainer:${{ matrix.swVersion }}-${{ matrix.phpVersion }}
+            platforms: linux/amd64,linux/arm64
+            file: Dockerfile.php
+            build-args: |
+              PHP_VERSION=${{ matrix.phpVersion }}
+              SHOPWARE_VERSION=${{ matrix.swVersion }}
             push: true
             provenance: false
