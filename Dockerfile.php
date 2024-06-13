@@ -25,6 +25,7 @@ RUN <<EOF
         npm \
         git \
         sudo-rs \
+        openssh-client \
         composer \
         php-${PHP_VERSION} \
         php-${PHP_VERSION}-fileinfo \
@@ -73,6 +74,6 @@ RUN <<EOF
     echo 'www-data ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 EOF
 
-COPY rootfs /
+COPY --link rootfs /
 
 USER www-data
