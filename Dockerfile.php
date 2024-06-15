@@ -25,6 +25,7 @@ RUN <<EOF
         npm \
         git \
         sudo \
+        shadow \
         openssh-client \
         composer \
         php-${PHP_VERSION} \
