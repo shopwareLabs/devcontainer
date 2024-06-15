@@ -24,7 +24,7 @@ RUN <<EOF
         nodejs-22 \
         npm \
         git \
-        sudo-rs \
+        sudo \
         openssh-client \
         composer \
         php-${PHP_VERSION} \
@@ -71,7 +71,9 @@ RUN <<EOF
 
     ldconfig
 
+    echo '/bin/bash' >> /etc/shells
     echo 'www-data ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+    chsh -s /bin/bash www-data
 EOF
 
 COPY --link rootfs /
