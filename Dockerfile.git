@@ -13,11 +13,13 @@ RUN --mount=type=ssh <<EOF
     mkdir -p ~/.ssh
     ssh-keyscan -t rsa gitlab.shopware.com >> ~/.ssh/known_hosts
     git clone $CLONE_URL -b $CLONE_BRANCH --depth=1 /shop/platform
-    composer config -d /shop/platform/src/Core version 6.6.9999999.9999999
-    composer config -d /shop/platform/src/Administration version 6.6.9999999.9999999
-    composer config -d /shop/platform/src/Storefront version 6.6.9999999.9999999
-    composer config -d /shop/platform/src/Elasticsearch version 6.6.9999999.9999999
+    composer config -d /shop/platform/src/Core version 6.6.9999999.9999999-dev
+    composer config -d /shop/platform/src/Administration version 6.6.9999999.9999999-dev
+    composer config -d /shop/platform/src/Storefront version 6.6.9999999.9999999-dev
+    composer config -d /shop/platform/src/Elasticsearch version 6.6.9999999.9999999-dev
 
+    composer config -d /shop/ minimum-stability dev
+    composer config -d /shop/ prefer-stable true
     composer config -d /shop/ repositories.custom-packages '{"type": "path", "url": "platform/src/*", "options": { "symlink": false } }'
 
     composer install --working-dir=/shop
