@@ -1,0 +1,68 @@
+ARG PHP_VERSION=8.2
+
+FROM friendsofshopware/shopware-cli:latest-php-${PHP_VERSION} as creation
+ARG CLONE_URL=https://github.com/shopware/shopware.git
+ARG CLONE_BRANCH=trunk
+
+RUN --mount=type=ssh <<EOF
+    set -e
+    apk add --no-cache openssh-client openssh-keyscan bash
+    git clone https://github.com/shopware/production.git /shop
+    rm -rf .github .git
+
+    mkdir -p ~/.ssh
+    ssh-keyscan -t rsa gitlab.shopware.com >> ~/.ssh/known_hosts
+    git clone $CLONE_URL -b $CLONE_BRANCH --depth=1 /shop/platform
+    composer config -d /shop/platform/src/Core version 6.6.9999999.9999999
+    composer config -d /shop/platform/src/Administration version 6.6.9999999.9999999
+    composer config -d /shop/platform/src/Storefront version 6.6.9999999.9999999
+    composer config -d /shop/platform/src/Elasticsearch version 6.6.9999999.9999999
+
+    composer config -d /shop/ repositories.custom-packages '{"type": "path", "url": "platform/src/*", "options": { "symlink": false } }'
+
+    composer install --working-dir=/shop
+
+    rm -rf /shop/platform
+    mkdir -p /shop/platform/src
+
+    cd /shop
+    ./bin/build-administration.sh
+    Ci=1 SHOPWARE_SKIP_THEME_COMPILE=1 ./bin/build-storefront.sh
+    find . -name 'node_modules' -type d -prune -print -exec rm -rf '{}' \;
+EOF
+
+COPY --chmod=555 <<EOF /shop/config/packages/override.yaml
+parameters:
+    env(TRUSTED_PROXIES): ''
+
+framework:
+    trusted_proxies: '%env(TRUSTED_PROXIES)%'
+
+shopware:
+    auto_update:
+        enabled: false
+    store:
+        frw: false
+EOF
+
+
+FROM quay.io/friendsofshopware/devcontainer:base-${PHP_VERSION}
+
+COPY --from=creation --chown=www-data /shop /var/www/html
+COPY --from=friendsofshopware/shopware-cli /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli
+
+RUN <<EOF
+    set -e
+    /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=www-data &
+    until mariadb-admin ping; do sleep 1; done
+
+    php bin/console system:install --create-database --force
+    mariadb -uroot -proot shopware -e "DELETE FROM sales_channel WHERE id = 0x98432def39fc4624b33213a56b8c944d"
+    php bin/console user:create "admin" --admin --password="shopware" -n
+    php bin/console sales-channel:create:storefront --name=Storefront --url="http://localhost:8000"
+    php bin/console theme:change --all Storefront
+    mariadb -uroot -proot -e "SET GLOBAL innodb_fast_shutdown=0"
+    mariadb -uroot -proot shopware -e "INSERT INTO system_config (id, configuration_key, configuration_value, sales_channel_id, created_at, updated_at) VALUES (0xb3ae4d7111114377af9480c4a0911111, 'core.frw.completedAt', '{\"_value\": \"2019-10-07T10:46:23+00:00\"}', NULL, '2019-10-07 10:46:23.169', NULL);"
+    rm -rf var/cache/* /var/tmp/*
+    php bin/console
+EOF
