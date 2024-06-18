@@ -10,7 +10,6 @@ This repository contains a Devcontainer Image for Shopware 6.6.
 	"workspaceMount": "source=${localWorkspaceFolder}/,target=/var/www/html/custom/plugins/FroshTools,type=bind",
 	"workspaceFolder": "/var/www/html",
 	"overrideCommand": false,
-	"updateRemoteUserUID": true,
 	"portsAttributes": {
 		"8000": {
 			"label": "Shopware",
