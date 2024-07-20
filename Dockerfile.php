@@ -79,4 +79,7 @@ EOF
 
 COPY --link rootfs /
 
+ENTRYPOINT ["/entrypoint"]
+CMD ["/usr/bin/hivemind", "/etc/Procfile"]
+
 USER www-data

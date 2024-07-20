@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+set -e
+
+sh /etc/scripts/fix-mount.sh
+
+exec $@
