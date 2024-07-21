@@ -25,6 +25,7 @@ RUN <<EOF
         nodejs-22 \
         npm \
         git \
+        patch \
         sudo \
         shadow \
         openssh-client \
