@@ -9,7 +9,8 @@ ENV DATABASE_URL=mysql://root:root@localhost/shopware \
     PHP_MEMORY_LIMIT=512M \
     COMPOSER_ROOT_VERSION=1.0.0 \
     APP_URL=http://localhost:8000 \
-    NPM_CONFIG_ENGINE_STRICT=false
+    NPM_CONFIG_ENGINE_STRICT=false \
+    MAILER_URL=smtp://127.0.0.1:1025
 
 RUN <<EOF
     set -e
@@ -59,7 +60,8 @@ RUN <<EOF
         php-${PHP_VERSION}-redis \
         openssl-config \
         mariadb-11.2 \
-        jq
+        jq \
+        mailpit
 
     mkdir -p /var/tmp /run/mysqld
     mariadb-install-db --datadir=/var/lib/mariadb --user=root
