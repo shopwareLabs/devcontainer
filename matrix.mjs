@@ -17,6 +17,10 @@ for (const swVersion of Object.keys(swToPHP).reverse()) {
     alreadyAddedVersion.add(patchVersion);
 
     for (const phpVersion of swToPHP[swVersion]) {
+        if (phpVersion === '8.1') {
+            continue;
+        }
+
         matrix.push({
             tag: patchVersion,
             swVersion,
