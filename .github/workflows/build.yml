@@ -124,7 +124,7 @@ jobs:
         with:
           tags: quay.io/friendsofshopware/devcontainer-dev:${{ matrix.tag }}-${{ matrix.phpVersion }}
           platforms: linux/amd64,linux/arm64
-          file: Dockerfile
+          file: Dockerfile.git
           build-args: |
             PHP_VERSION=${{ matrix.phpVersion }}
             CLONE_BRANCH=v${{ matrix.swVersion }}
