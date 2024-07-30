@@ -3,7 +3,18 @@ const swToPHP = await (await fetch('https://raw.githubusercontent.com/FriendsOfS
 const matrix = [];
 const alreadyAddedVersion = new Set();
 
-for (const swVersion of Object.keys(swToPHP).reverse()) {
+const customSort = (a, b) => {
+    const aParts = a.split('.').map(Number);
+    const bParts = b.split('.').map(Number);
+
+    for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+        if ((aParts[i] || 0) > (bParts[i] || 0)) return -1;
+        if ((aParts[i] || 0) < (bParts[i] || 0)) return 1;
+    }
+    return 0;
+};
+
+for (const swVersion of Object.keys(swToPHP).sort(customSort)) {
     if ((swVersion.indexOf('6.6') !== 0 && swVersion.indexOf('6.5.8') !== 0) || swVersion.indexOf('RC') !== -1) {
         continue;
     }
