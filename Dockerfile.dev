@@ -1,0 +1,62 @@
+ARG PHP_VERSION=8.2
+
+FROM friendsofshopware/shopware-cli:latest-php-${PHP_VERSION} as creation
+ARG CLONE_URL=https://github.com/shopware/shopware.git
+ARG SHOPWARE_VERSION=6.5.8.12
+
+RUN --mount=type=ssh <<EOF
+    set -e
+
+    apk add --no-cache bash jq
+
+    git clone https://github.com/shopware/shopware.git -b v$SHOPWARE_VERSION --depth=1 /shop
+    rm -rf .github .git
+    composer config -d /shop version $SHOPWARE_VERSION
+
+    composer install --working-dir=/shop
+
+    cd /shop
+    export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+    composer init:js
+    composer build:js:admin
+    composer build:js:storefront || true
+    find . -name 'node_modules' -type d -prune -print -exec rm -rf '{}' \;
+EOF
+
+COPY --chmod=555 <<EOF /shop/config/packages/override.yaml
+parameters:
+    env(TRUSTED_PROXIES): ''
+
+framework:
+    trusted_proxies: '%env(TRUSTED_PROXIES)%'
+
+shopware:
+    auto_update:
+        enabled: false
+    store:
+        frw: false
+EOF
+
+
+FROM quay.io/friendsofshopware/devcontainer-base:${PHP_VERSION}
+
+COPY --from=creation --chown=www-data /shop /var/www/html
+COPY --from=friendsofshopware/shopware-cli /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli
+
+ENV APP_SECRET=def00000bb5acb32b54ff8ee130270586eec0e878f7337dc7a837acc31d3ff00f93a56b595448b4b29664847dd51991b3314ff65aeeeb761a133b0ec0e070433bff08e48
+
+RUN <<EOF
+    set -e
+    /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=www-data &
+    until mariadb-admin ping; do sleep 1; done
+
+    php bin/console system:install --create-database --force
+    mariadb -uroot -proot shopware -e "DELETE FROM sales_channel WHERE id = 0x98432def39fc4624b33213a56b8c944d"
+    php bin/console user:create "admin" --admin --password="shopware" -n
+    php bin/console sales-channel:create:storefront --name=Storefront --url="http://localhost:8000"
+    php bin/console theme:change --all Storefront
+    mariadb -uroot -proot -e "SET GLOBAL innodb_fast_shutdown=0"
+    mariadb -uroot -proot shopware -e "INSERT INTO system_config (id, configuration_key, configuration_value, sales_channel_id, created_at, updated_at) VALUES (0xb3ae4d7111114377af9480c4a0911111, 'core.frw.completedAt', '{\"_value\": \"2019-10-07T10:46:23+00:00\"}', NULL, '2019-10-07 10:46:23.169', NULL);"
+    rm -rf var/cache/* /var/tmp/*
+    php bin/console
+EOF
