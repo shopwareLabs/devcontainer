@@ -61,6 +61,7 @@ RUN <<EOF
         php-${PHP_VERSION}-redis \
         openssl-config \
         mariadb-11.2 \
+        mariadb-11.2-client \
         jq \
         mailpit
 
