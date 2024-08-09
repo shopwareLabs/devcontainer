@@ -1,8 +1,9 @@
 ARG PHP_VERSION=8.2
 
-FROM friendsofshopware/shopware-cli:latest-php-${PHP_VERSION} as creation
+FROM friendsofshopware/shopware-cli:latest-php-${PHP_VERSION} AS creation
 ARG CLONE_URL=https://github.com/shopware/shopware.git
 ARG CLONE_BRANCH=trunk
+ARG PLUGINS=""
 
 RUN --mount=type=ssh <<EOF
     set -e
@@ -20,12 +21,27 @@ RUN --mount=type=ssh <<EOF
 
     composer config -d /shop/ minimum-stability dev
     composer config -d /shop/ prefer-stable true
-    composer config -d /shop/ repositories.custom-packages '{"type": "path", "url": "platform/src/*", "options": { "symlink": false } }'
+    composer config -d /shop/ repositories.custom-packages '{"type": "path", "url": "platform/src/*", "options": { "symlink": true } }'
 
     composer install --working-dir=/shop
 
-    rm -rf /shop/platform
-    mkdir -p /shop/platform/src
+    if [ -n "$PLUGINS" ]; then
+        for plugin in $PLUGINS; do
+            additionalCloneArgs=""
+            
+            if [[ $plugin == *"|"* ]]; then
+                formatted=$plugin
+                plugin=$(echo $formatted | cut -d "|" -f 1)
+                branch=$(echo $formatted | cut -d "|" -f 2)
+
+                additionalCloneArgs="--branch $branch"
+            fi
+
+            folderName=$(basename -s .git $plugin)
+            git clone --depth=1 $additionalCloneArgs "$plugin" "/shop/custom/plugins/$folderName"
+            SHOPWARE_PROJECT_ROOT=/shop shopware-cli extension build "/shop/custom/plugins/$folderName"
+        done
+    fi
 
     cd /shop
     ./bin/build-administration.sh
