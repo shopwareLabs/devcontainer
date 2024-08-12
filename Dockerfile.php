@@ -10,7 +10,8 @@ ENV DATABASE_URL=mysql://root:root@localhost/shopware \
     COMPOSER_ROOT_VERSION=1.0.0 \
     APP_URL=http://localhost:8000 \
     NPM_CONFIG_ENGINE_STRICT=false \
-    MAILER_URL=smtp://127.0.0.1:1025
+    MAILER_URL=smtp://127.0.0.1:1025 \
+    TRUSTED_PROXIES=REMOTE_ADDR
 
 RUN <<EOF
     set -e
