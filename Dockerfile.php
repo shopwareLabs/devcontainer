@@ -11,7 +11,8 @@ ENV DATABASE_URL=mysql://root:root@localhost/shopware \
     APP_URL=http://localhost:8000 \
     NPM_CONFIG_ENGINE_STRICT=false \
     MAILER_URL=smtp://127.0.0.1:1025 \
-    TRUSTED_PROXIES=REMOTE_ADDR
+    TRUSTED_PROXIES=REMOTE_ADDR \
+    SHOPWARE_CACHE_ID=docker
 
 RUN <<EOF
     set -e
