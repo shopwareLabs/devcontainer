@@ -1,5 +1,6 @@
 nginx: /usr/sbin/nginx
 php-fpm: /usr/sbin/php-fpm
-mysql: /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=www-data
+mariadb: /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=www-data
 valkey: /usr/bin/valkey-server --dir /tmp
 mailpit: /usr/bin/mailpit --db-file /tmp/mailpit.db
+maintenance: /etc/scripts/app-url.sh
