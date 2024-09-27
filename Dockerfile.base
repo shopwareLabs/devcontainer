@@ -1,0 +1,30 @@
+ARG PHP_VERSION=8.3
+
+FROM ghcr.io/friendsofshopware/devcontainer-base-slim:${PHP_VERSION}
+
+ARG PHP_VERSION=8.3
+
+ENV DATABASE_URL=mysql://root:root@mysql/shopware
+
+RUN <<EOF
+    set -e
+
+    sudo apk add --no-cache \
+        valkey \
+        mariadb-11.2 \
+        mailpit
+
+    echo "mariadb: /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=www-data" | sudo tee /etc/Procfile
+    echo "valkey: /usr/bin/valkey-server --dir /tmp" | sudo tee /etc/Procfile
+    echo "mailpit: /usr/bin/mailpit --db-file /tmp/mailpit.db" | sudo tee /etc/Procfile
+
+    sudo mkdir -p /var/tmp /run/mysqld /var/lib/mariadb
+    sudo chown -R www-data:www-data /var/tmp /run/mysqld /var/lib/mariadb
+
+    mariadb-install-db --datadir=/var/lib/mariadb
+    /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin &
+
+    until mariadb-admin ping; do sleep 1; done
+
+    mariadb-admin --user=root password 'root'
+EOF

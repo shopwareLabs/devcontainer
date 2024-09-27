@@ -4,7 +4,7 @@ FROM ghcr.io/shyim/wolfi-php/nginx:${PHP_VERSION}
 
 ARG PHP_VERSION=8.3
 
-ENV DATABASE_URL=mysql://root:root@localhost/shopware \
+ENV DATABASE_URL=mysql://root:root@mysql/shopware \
     LOCK_DSN=flock \
     PHP_MEMORY_LIMIT=512M \
     COMPOSER_ROOT_VERSION=1.0.0 \
@@ -19,9 +19,9 @@ RUN <<EOF
 
     apk add --no-cache \
         libstdc++ \
+        posix-libc-utils \
         bash \
         bash-completion \
-        valkey \
         valkey-cli \
         curl \
         nodejs-22 \
@@ -62,25 +62,21 @@ RUN <<EOF
         php-${PHP_VERSION}-zstd \
         php-${PHP_VERSION}-redis \
         openssl-config \
-        mariadb-11.2 \
         mariadb-11.2-client \
-        jq \
-        mailpit
-
-    mkdir -p /var/tmp /run/mysqld
-    mariadb-install-db --datadir=/var/lib/mariadb --user=root
-    /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=root &
-
-    until mariadb-admin ping; do sleep 1; done
-
-    mariadb-admin --user=root password 'root'
-    chown -R www-data:www-data /var/www/html /var/lib/mariadb/ /var/tmp /run/mysqld/
+        jq
 
     ldconfig
+
+    usermod -u 1000 www-data
+    groupmod -g 1000 www-data
 
     echo '/bin/bash' >> /etc/shells
     echo 'www-data ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
     chsh -s /bin/bash www-data
+
+    echo -e "[client]\nuser=root\npassword=root\nhost=mysql" > /home/www-data/.my.cnf
+
+    chown -R www-data:www-data /var/www/html /home/www-data
 EOF
 
 COPY --link rootfs /
