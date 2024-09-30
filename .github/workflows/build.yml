@@ -38,6 +38,8 @@ jobs:
         uses: actions/cache@v4
         id: cache
         with:
+          key: wolfi-apk-cache
+          save-always: true
           path: |
             var-cache-apk
 
@@ -72,6 +74,8 @@ jobs:
         uses: actions/cache@v4
         id: cache
         with:
+          key: wolfi-apk-cache
+          save-always: true
           path: |
             var-cache-apk
 
