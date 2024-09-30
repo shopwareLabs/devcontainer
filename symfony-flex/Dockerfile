@@ -30,9 +30,11 @@ FROM --platform=$BUILDPLATFORM base AS setup
 
 COPY --from=creation --chown=www-data /shop /var/www/html
 
-RUN <<EOF
-    set -e
-    /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=www-data &
+ARG SHOPWARE_VERSION=6.6.3.0
+
+RUN --mount=type=cache,id=sqldump=${SHOPWARE_VERSION},sharing=locked,target=/var/cache/sql <<EOF
+    set -eo pipefail
+    /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=www-data --skip-networking &
     until mariadb-admin ping; do sleep 1; done
 
     php bin/console system:install --create-database --force
@@ -45,7 +47,9 @@ RUN <<EOF
     rm -rf var/cache/* /var/tmp/*
     php bin/console
 
-    mariadb-dump shopware | gzip > /var/www/html/shopware.sql.gz
+    sudo chown -R www-data /var/cache/sql/
+
+    mariadb-dump shopware | gzip > /var/cache/sql/shopware.sql.gz
 EOF
 
 FROM base
@@ -54,11 +58,13 @@ COPY --from=shopware-cli /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli
 
 COPY --from=setup /var/www/html /var/www/html
 
-RUN <<EOF
-    set -e
-    /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=www-data &
+ARG SHOPWARE_VERSION=6.6.3.0
+
+RUN --mount=type=cache,id=sqldump=${SHOPWARE_VERSION},sharing=locked,target=/var/cache/sql <<EOF
+    set -eo pipefail
+    /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=www-data --skip-networking &
     until mariadb-admin ping; do sleep 1; done
 
     mariadb -e 'CREATE DATABASE shopware'
-    zcat /var/www/html/shopware.sql.gz | mariadb shopware
+    zcat /var/cache/sql/shopware.sql.gz | mariadb shopware
 EOF

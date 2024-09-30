@@ -30,7 +30,7 @@ RUN --mount=type=cache,id=apk-${TARGETARCH},sharing=locked,target=/var/cache/apk
     sudo chown -R www-data:www-data /var/tmp /run/mysqld /var/lib/mariadb
 
     mariadb-install-db --datadir=/var/lib/mariadb
-    /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin &
+    /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --skip-networking &
 
     until mariadb-admin --no-defaults ping; do sleep 1; done
 
