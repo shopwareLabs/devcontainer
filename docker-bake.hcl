@@ -7,7 +7,7 @@ target "base-slim" {
         PHP_VERSION = phpVersion
     }
     dockerfile = "Dockerfile.base-slim"
-    tags = [ "ghcr.io/shopwarelabs/devcontainer/base-slim:${phpVersion}" ]
+    tags = [ "ghcr.io/shopware/devcontainer/base-slim:${phpVersion}" ]
     platforms = ["linux/amd64", "linux/arm64"]
 }
 
@@ -20,6 +20,6 @@ target "base-full" {
         PHP_VERSION = phpVersion
     }
     dockerfile = "Dockerfile.base-full"
-    tags = [ "ghcr.io/shopwarelabs/devcontainer/base-full:${phpVersion}" ]
+    tags = [ "ghcr.io/shopware/devcontainer/base-full:${phpVersion}" ]
     platforms = ["linux/amd64", "linux/arm64"]
 }

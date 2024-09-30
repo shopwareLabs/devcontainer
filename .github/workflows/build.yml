@@ -81,7 +81,7 @@ jobs:
 
       - uses: docker/build-push-action@v5
         with:
-          tags: ghcr.io/shopwarelabs/devcontainer/flex:${{ matrix.tag }}-${{ matrix.phpVersion }}
+          tags: ghcr.io/shopware/devcontainer/flex:${{ matrix.tag }}-${{ matrix.phpVersion }}
           platforms: linux/amd64,linux/arm64
           file: Dockerfile
           build-args: |
@@ -109,7 +109,7 @@ jobs:
 
       - uses: docker/build-push-action@v5
         with:
-          tags: ghcr.io/shopwarelabs/devcontainer/dev:${{ matrix.tag }}-${{ matrix.phpVersion }}
+          tags: ghcr.io/shopware/devcontainer/dev:${{ matrix.tag }}-${{ matrix.phpVersion }}
           platforms: linux/amd64,linux/arm64
           file: Dockerfile.dev
           build-args: |

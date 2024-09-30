@@ -26,7 +26,7 @@ shopware:
 EOF
 
 
-FROM ghcr.io/shopwarelabs/devcontainer-base-full:${PHP_VERSION}
+FROM ghcr.io/shopware/devcontainer-base-full:${PHP_VERSION}
 
 COPY --from=creation --chown=www-data /shop /var/www/html
 COPY --from=friendsofshopware/shopware-cli /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli

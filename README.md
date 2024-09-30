@@ -9,7 +9,7 @@ Devcontainers are a feature of Visual Studio Code that allow you to define a dev
 
 ```json
 {
-	"image": "quay.io/friendsofshopware/devcontainer:6.6.3-8.3",
+	"image": "ghcr.io/shopware/devcontainer/flex:6.6.3-8.3",
 	"workspaceMount": "source=${localWorkspaceFolder}/,target=/var/www/html/custom/plugins/FroshTools,type=bind",
 	"workspaceFolder": "/var/www/html",
 	"overrideCommand": false,
