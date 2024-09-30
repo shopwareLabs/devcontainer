@@ -1,10 +1,9 @@
 ARG PHP_VERSION=8.2
 
-FROM friendsofshopware/shopware-cli:latest-php-${PHP_VERSION} AS creation
-ARG CLONE_URL=https://github.com/shopware/shopware.git
+FROM --platform=$BUILDPLATFORM shopware-cli AS creation
 ARG SHOPWARE_VERSION=6.5.8.12
 
-RUN --mount=type=ssh <<EOF
+RUN <<EOF
     set -e
 
     apk add --no-cache bash jq
@@ -38,14 +37,15 @@ shopware:
 EOF
 
 
-FROM ghcr.io/shopware/devcontainer/base-full:${PHP_VERSION}
+FROM --platform=$BUILDPLATFORM base AS setup
+
+ARG SHOPWARE_VERSION=6.5.8.12
 
 COPY --from=creation --chown=www-data /shop /var/www/html
-COPY --from=friendsofshopware/shopware-cli /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli
 
-RUN <<EOF
+RUN --mount=type=cache,id=sqldump-dev=${SHOPWARE_VERSION},sharing=locked,target=/var/cache/sql <<EOF
     set -e
-    /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=www-data &
+    /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=www-data --skip-networking &
     until mariadb-admin ping; do sleep 1; done
 
     php bin/console system:install --create-database --force
@@ -57,4 +57,24 @@ RUN <<EOF
     mariadb -uroot -proot shopware -e "INSERT INTO system_config (id, configuration_key, configuration_value, sales_channel_id, created_at, updated_at) VALUES (0xb3ae4d7111114377af9480c4a0911111, 'core.frw.completedAt', '{\"_value\": \"2019-10-07T10:46:23+00:00\"}', NULL, '2019-10-07 10:46:23.169', NULL);"
     rm -rf var/cache/* /var/tmp/*
     php bin/console
+
+    sudo chown -R www-data /var/cache/sql/
+
+    mariadb-dump shopware | gzip > /var/cache/sql/shopware.sql.gz
+EOF
+
+FROM base
+
+COPY --from=friendsofshopware/shopware-cli /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli
+COPY --from=setup /var/www/html /var/www/html
+
+ARG SHOPWARE_VERSION=6.5.8.12
+
+RUN --mount=type=cache,id=sqldump-dev=${SHOPWARE_VERSION},sharing=locked,target=/var/cache/sql <<EOF
+    set -eo pipefail
+    /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=www-data --skip-networking &
+    until mariadb-admin ping; do sleep 1; done
+
+    mariadb -e 'CREATE DATABASE shopware'
+    zcat /var/cache/sql/shopware.sql.gz | mariadb shopware
 EOF

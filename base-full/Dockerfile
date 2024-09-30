@@ -5,7 +5,8 @@ FROM base
 ARG PHP_VERSION=8.3
 ARG TARGETARCH
 
-ENV DATABASE_URL=mysql://root:root@localhost/shopware
+ENV DATABASE_URL=mysql://root:root@localhost/shopware \
+    MAILER_DSN=smtp://localhost:1025
 
 RUN --mount=type=cache,id=apk-${TARGETARCH},sharing=locked,target=/var/cache/apk <<EOF
     set -e
