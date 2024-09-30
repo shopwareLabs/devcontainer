@@ -40,8 +40,6 @@ target "base-full" {
 }
 
 target "symfony-flex" {
-    name = "symfony-flex"
-    matrix = shopwareMatrix
     args = {
         PHP_VERSION = currentPHPVersion
         SHOPWARE_VERSION = currentShopwareVersion

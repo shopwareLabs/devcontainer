@@ -39,6 +39,8 @@ jobs:
 
   base-full:
     name: "Build Base Full"
+    needs:
+      - base-slim
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -57,6 +59,8 @@ jobs:
         run: docker buildx bake base-full --push
 
   generate-matrix:
+    needs:
+      - base-full
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.generate-matrix.outputs.matrix }}
