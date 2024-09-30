@@ -48,7 +48,7 @@ jobs:
         with:
           cache-map: |
             {
-              "var-cache-apt": "/var/cache/apk"
+              "var-cache-apk": "/var/cache/apk"
             }
           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
 
@@ -84,7 +84,7 @@ jobs:
         with:
           cache-map: |
             {
-              "var-cache-apt": "/var/cache/apk"
+              "var-cache-apk": "/var/cache/apk"
             }
           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
 
