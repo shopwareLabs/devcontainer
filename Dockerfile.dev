@@ -1,6 +1,6 @@
 ARG PHP_VERSION=8.2
 
-FROM friendsofshopware/shopware-cli:latest-php-${PHP_VERSION} as creation
+FROM friendsofshopware/shopware-cli:latest-php-${PHP_VERSION} AS creation
 ARG CLONE_URL=https://github.com/shopware/shopware.git
 ARG SHOPWARE_VERSION=6.5.8.12
 
@@ -38,12 +38,10 @@ shopware:
 EOF
 
 
-FROM quay.io/friendsofshopware/devcontainer-base:${PHP_VERSION}
+FROM ghcr.io/shopwarelabs/devcontainer/base-full:${PHP_VERSION}
 
 COPY --from=creation --chown=www-data /shop /var/www/html
 COPY --from=friendsofshopware/shopware-cli /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli
-
-ENV APP_SECRET=def00000bb5acb32b54ff8ee130270586eec0e878f7337dc7a837acc31d3ff00f93a56b595448b4b29664847dd51991b3314ff65aeeeb761a133b0ec0e070433bff08e48
 
 RUN <<EOF
     set -e
