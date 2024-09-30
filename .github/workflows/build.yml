@@ -41,14 +41,22 @@ jobs:
           key: wolfi-apk-cache
           save-always: true
           path: |
-            var-cache-apk
+            var-cache-apk-arm64
+            var-cache-apk-amd64
 
       - name: Inject cache into docker
         uses: reproducible-containers/buildkit-cache-dance@v3
         with:
           cache-map: |
             {
-              "var-cache-apk": "/var/cache/apk"
+              "var-cache-apk-arm64": {
+                "target": "/var/cache/apk",
+                "id": "apk-arm64"
+              },
+              "var-cache-apk-amd64": {
+                "target": "/var/cache/apk",
+                "id": "apk-amd64"
+              }
             }
           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
 
@@ -70,6 +78,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+
       - name: Cache
         uses: actions/cache@v4
         id: cache
@@ -77,14 +86,22 @@ jobs:
           key: wolfi-apk-cache
           save-always: true
           path: |
-            var-cache-apk
+            var-cache-apk-arm64
+            var-cache-apk-amd64
 
       - name: Inject cache into docker
         uses: reproducible-containers/buildkit-cache-dance@v3
         with:
           cache-map: |
             {
-              "var-cache-apk": "/var/cache/apk"
+              "var-cache-apk-arm64": {
+                "target": "/var/cache/apk",
+                "id": "apk-arm64"
+              },
+              "var-cache-apk-amd64": {
+                "target": "/var/cache/apk",
+                "id": "apk-amd64"
+              }
             }
           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
 

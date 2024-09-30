@@ -7,7 +7,7 @@ ARG TARGETARCH
 
 ENV DATABASE_URL=mysql://root:root@localhost/shopware
 
-RUN --mount=type=cache,id=apk-${PHP_VERSION}=${TARGETARCH},sharing=locked,target=/var/cache/apk <<EOF
+RUN --mount=type=cache,id=apk-${TARGETARCH},sharing=locked,target=/var/cache/apk <<EOF
     set -e
 
     sudo ln -s /var/cache/apk /etc/apk/cache
