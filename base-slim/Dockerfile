@@ -98,7 +98,9 @@ RUN --mount=type=cache,id=apk-${TARGETARCH},sharing=locked,target=/var/cache/apk
     echo 'www-data ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
     chsh -s /bin/bash www-data
 
-    echo -e "[client]\nuser=root\npassword=root\nhost=mysql" > /home/www-data/.my.cnf
+    echo -e "[client]\nuser=root\npassword=root\nhost=db" > /home/www-data/.my.cnf
+
+    sudo rm -rf /var/www/html/public
 
     chown -R 1000:1000 /var/www /home/www-data
 EOF

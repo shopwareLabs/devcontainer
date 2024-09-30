@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-until mariadb-admin ping; do sleep 1; done
+until mariadb -e 'select 1'; do sleep 1; done
 
 if [[ -n $APP_URL ]]; then
   mariadb -uroot -proot shopware -e "UPDATE sales_channel_domain set url = '${APP_URL}'"
