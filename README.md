@@ -1,6 +1,6 @@
 # Devcontainer Image
 
-This repository contains a Devcontainer Image for Shopware 6.6. 
+Devcontainers are a feature of Visual Studio Code that allow you to define a development environment in a container. This allows you to have a consistent development environment across different machines and operating systems. This is adapted also to different other edtitors like PhpStorm.
 
 ## Example file for plugin development
 
@@ -23,5 +23,3 @@ This repository contains a Devcontainer Image for Shopware 6.6.
 	"onCreateCommand": "php bin/console plugin:refresh && php bin/console plugin:install --activate FroshTools"
 }
 ```
-
-You can browse https://quay.io/repository/friendsofshopware/devcontainer for all tags.

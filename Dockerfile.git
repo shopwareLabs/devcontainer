@@ -28,7 +28,7 @@ RUN --mount=type=ssh <<EOF
     if [ -n "$PLUGINS" ]; then
         for plugin in $PLUGINS; do
             additionalCloneArgs=""
-            
+
             if [[ $plugin == *"|"* ]]; then
                 formatted=$plugin
                 plugin=$(echo $formatted | cut -d "|" -f 1)
@@ -64,7 +64,7 @@ shopware:
 EOF
 
 
-FROM quay.io/friendsofshopware/devcontainer-base:${PHP_VERSION}
+FROM ghcr.io/shopwarelabs/devcontainer/base-full:${PHP_VERSION}
 
 COPY --from=creation --chown=www-data /shop /var/www/html
 COPY --from=friendsofshopware/shopware-cli /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli

@@ -18,36 +18,33 @@ permissions:
   id-token: write
 
 jobs:
-  base:
-    name: "${{ matrix.version }}"
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        version:
-          - 8.2
-          - 8.3
+  base-slim:
+    name: "Build Base Slim"
+    runs-on: shopware-arm64
+    container: ghcr.io/catthehacker/ubuntu:act-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Login into Docker Registery
-        run: echo "${{ secrets.QUAY_ROBOT_PASSWORD }}" | docker login quay.io -u friendsofshopware+devcontainer_gh_actions --password-stdin
+      - name: Login into Github Docker Registery
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Install and configure Namespace CLI
-        uses: namespacelabs/nscloud-setup@v0
+      - name: Build and Push
+        run: docker buildx bake base-slim --push
 
-      - name: Configure Namespace powered Buildx
-        uses: namespacelabs/nscloud-setup-buildx-action@v0
+  base-full:
+    name: "Build Base Full"
+    runs-on: shopware-arm64
+    container: ghcr.io/catthehacker/ubuntu:act-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: docker/build-push-action@v5
-        with:
-          tags: quay.io/friendsofshopware/devcontainer-base:${{ matrix.version }}
-          platforms: linux/amd64,linux/arm64
-          file: Dockerfile.php
-          build-args: |
-            PHP_VERSION=${{ matrix.version }}
-          push: true
-          provenance: false
+      - name: Login into Github Docker Registery
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and Push
+        run: docker buildx bake base-full --push
 
   generate-matrix:
     runs-on: ubuntu-latest
@@ -66,9 +63,10 @@ jobs:
           echo 'EOF' >> $GITHUB_OUTPUT
 
   build-flex:
-    runs-on: ubuntu-latest
-    needs: 
-      - base
+    runs-on: shopware-arm64
+    container: ghcr.io/catthehacker/ubuntu:act-22.04
+    needs:
+      - base-full
       - generate-matrix
     strategy:
       fail-fast: false
@@ -77,19 +75,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      - name: Login into Docker Registery
-        run: echo "${{ secrets.QUAY_ROBOT_PASSWORD }}" | docker login quay.io -u friendsofshopware+devcontainer_gh_actions --password-stdin
 
-      - name: Install and configure Namespace CLI
-        uses: namespacelabs/nscloud-setup@v0
-
-      - name: Configure Namespace powered Buildx
-        uses: namespacelabs/nscloud-setup-buildx-action@v0
+      - name: Login into Github Docker Registery
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - uses: docker/build-push-action@v5
         with:
-          tags: quay.io/friendsofshopware/devcontainer:${{ matrix.tag }}-${{ matrix.phpVersion }}
+          tags: ghcr.io/shopwarelabs/devcontainer/flex:${{ matrix.tag }}-${{ matrix.phpVersion }}
           platforms: linux/amd64,linux/arm64
           file: Dockerfile
           build-args: |
@@ -99,9 +91,10 @@ jobs:
           provenance: false
 
   build-dev:
-    runs-on: ubuntu-latest
-    needs: 
-      - base
+    runs-on: shopware-arm64
+    container: ghcr.io/catthehacker/ubuntu:act-22.04
+    needs:
+      - base-fuyll
       - generate-matrix
     strategy:
       fail-fast: false
@@ -110,19 +103,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      - name: Login into Docker Registery
-        run: echo "${{ secrets.QUAY_ROBOT_PASSWORD }}" | docker login quay.io -u friendsofshopware+devcontainer_gh_actions --password-stdin
 
-      - name: Install and configure Namespace CLI
-        uses: namespacelabs/nscloud-setup@v0
-
-      - name: Configure Namespace powered Buildx
-        uses: namespacelabs/nscloud-setup-buildx-action@v0
+      - name: Login into Github Docker Registery
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - uses: docker/build-push-action@v5
         with:
-          tags: quay.io/friendsofshopware/devcontainer-dev:${{ matrix.tag }}-${{ matrix.phpVersion }}
+          tags: ghcr.io/shopwarelabs/devcontainer/dev:${{ matrix.tag }}-${{ matrix.phpVersion }}
           platforms: linux/amd64,linux/arm64
           file: Dockerfile.dev
           build-args: |
