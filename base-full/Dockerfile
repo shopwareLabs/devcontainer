@@ -1,11 +1,11 @@
 ARG PHP_VERSION=8.3
 
-FROM ghcr.io/friendsofshopware/devcontainer/base-slim:${PHP_VERSION}
+FROM base
 
 ARG PHP_VERSION=8.3
 ARG TARGETARCH
 
-ENV DATABASE_URL=mysql://root:root@mysql/shopware
+ENV DATABASE_URL=mysql://root:root@localhost/shopware
 
 RUN --mount=type=cache,id=apk-${PHP_VERSION}=${TARGETARCH},sharing=locked,target=/var/cache/apk <<EOF
     set -e

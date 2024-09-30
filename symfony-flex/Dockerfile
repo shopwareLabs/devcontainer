@@ -1,6 +1,6 @@
 ARG PHP_VERSION=8.2
 
-FROM friendsofshopware/shopware-cli:latest-php-${PHP_VERSION} as creation
+FROM --platform=$BUILDPLATFORM shopware-cli AS creation
 ARG SHOPWARE_VERSION=6.6.3.0
 
 RUN <<EOF
@@ -26,10 +26,9 @@ shopware:
 EOF
 
 
-FROM ghcr.io/shopware/devcontainer-base-full:${PHP_VERSION}
+FROM --platform=$BUILDPLATFORM base AS setup
 
 COPY --from=creation --chown=www-data /shop /var/www/html
-COPY --from=friendsofshopware/shopware-cli /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli
 
 RUN <<EOF
     set -e
@@ -45,4 +44,21 @@ RUN <<EOF
     mariadb -uroot -proot shopware -e "INSERT INTO system_config (id, configuration_key, configuration_value, sales_channel_id, created_at, updated_at) VALUES (0xb3ae4d7111114377af9480c4a0911111, 'core.frw.completedAt', '{\"_value\": \"2019-10-07T10:46:23+00:00\"}', NULL, '2019-10-07 10:46:23.169', NULL);"
     rm -rf var/cache/* /var/tmp/*
     php bin/console
+
+    mariadb-dump shopware | gzip > /var/www/html/shopware.sql.gz
+EOF
+
+FROM base
+
+COPY --from=shopware-cli /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli
+
+COPY --from=setup /var/www/html /var/www/html
+
+RUN <<EOF
+    set -e
+    /usr/bin/mariadbd --basedir=/usr --datadir=/var/lib/mariadb --plugin-dir=/usr/lib/mariadb/plugin --user=www-data &
+    until mariadb-admin ping; do sleep 1; done
+
+    mariadb -e 'CREATE DATABASE shopware'
+    zcat /var/www/html/shopware.sql.gz | mariadb shopware
 EOF

@@ -1,25 +1,56 @@
+variable "image" {
+    default = "ghcr.io/shopwarelabs/devcontainer"
+}
+
+variable "currentPHPVersion" {
+    default = "8.2"
+}
+
+variable "currentShopwareVersion" {
+    default = "6.6.4.1"
+}
+
 target "base-slim" {
-    name = "base-slim-${replace(phpVersion, ".", "-")}"
+    name = "base-slim-${replace(php, ".", "-")}"
     matrix = {
-        phpVersion = ["8.2", "8.3"]
+        php = ["8.2", "8.3"]
     }
     args = {
-        PHP_VERSION = phpVersion
+        PHP_VERSION = php
     }
-    dockerfile = "Dockerfile.base-slim"
-    tags = [ "ghcr.io/shopware/devcontainer/base-slim:${phpVersion}" ]
+    context = "base-slim"
+    tags = [ "${image}/base-slim:${php}" ]
     platforms = ["linux/amd64", "linux/arm64"]
 }
 
 target "base-full" {
-    name = "base-full-${replace(phpVersion, ".", "-")}"
+    name = "base-full-${replace(php, ".", "-")}"
     matrix = {
-        phpVersion = ["8.2", "8.3"]
+        php = ["8.2", "8.3"]
     }
     args = {
-        PHP_VERSION = phpVersion
+        PHP_VERSION = php
     }
-    dockerfile = "Dockerfile.base-full"
-    tags = [ "ghcr.io/shopware/devcontainer/base-full:${phpVersion}" ]
+    contexts = {
+        base = "docker-image://${image}/base-slim:${php}"
+    }
+    context = "base-full"
+    tags = [ "${image}/base-full:${php}" ]
+    platforms = ["linux/amd64", "linux/arm64"]
+}
+
+target "symfony-flex" {
+    name = "symfony-flex"
+    matrix = shopwareMatrix
+    args = {
+        PHP_VERSION = currentPHPVersion
+        SHOPWARE_VERSION = currentShopwareVersion
+    }
+    contexts = {
+        base = "docker-image://${image}/base-full:${currentPHPVersion}"
+        shopware-cli = "docker-image://friendsofshopware/shopware-cli:latest-php-${currentPHPVersion}"
+    }
+    context = "symfony-flex"
+    tags = [ "${image}/symfony-flex:${regex("^[0-9]+\\.[0-9]+\\.[0-9]+", currentShopwareVersion)}-${currentPHPVersion}" ]
     platforms = ["linux/amd64", "linux/arm64"]
 }
