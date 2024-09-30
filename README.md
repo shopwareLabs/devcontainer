@@ -1,5 +1,8 @@
 # Devcontainer Image
 
+> [!NOTE]
+> This is an experiment and may be discontinued based on user feedbacks
+
 Devcontainers are a feature of Visual Studio Code that allow you to define a development environment in a container. This allows you to have a consistent development environment across different machines and operating systems. This is adapted also to different other edtitors like PhpStorm.
 
 ## Example file for plugin development
