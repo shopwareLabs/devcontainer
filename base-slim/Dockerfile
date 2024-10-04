@@ -87,8 +87,6 @@ RUN --mount=type=cache,id=apk-${TARGETARCH},sharing=locked,target=/var/cache/apk
 
     rm /etc/apk/cache
 
-    mv /usr/local/etc/profile.d/git-completion.bash /etc/bash_completion.d/
-
     ldconfig
 
     usermod -u 1000 www-data
