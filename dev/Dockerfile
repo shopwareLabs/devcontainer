@@ -14,6 +14,8 @@ RUN <<EOF
 
     composer install --working-dir=/shop
 
+    export APP_URL=http://localhost:8000
+
     cd /shop
     export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
     composer init:js
