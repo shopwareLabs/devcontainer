@@ -51,6 +51,7 @@ RUN --mount=type=cache,id=apk-${TARGETARCH},sharing=locked,target=/var/cache/apk
         sudo \
         shadow \
         openssh-client \
+        openssh-keygen \
         composer \
         php-${PHP_VERSION} \
         php-${PHP_VERSION}-fileinfo \
