@@ -63,6 +63,6 @@ target "dev" {
         shopware-cli = "docker-image://friendsofshopware/shopware-cli:latest-php-${currentPHPVersion}"
     }
     context = "dev"
-    tags = [ "${image}/symfony-flex:${regex("^[0-9]+\\.[0-9]+\\.[0-9]+", currentShopwareVersion)}-${currentPHPVersion}" ]
+    tags = [ "${image}/contribute:${regex("^[0-9]+\\.[0-9]+\\.[0-9]+", currentShopwareVersion)}-${currentPHPVersion}" ]
     platforms = ["linux/amd64", "linux/arm64"]
 }
