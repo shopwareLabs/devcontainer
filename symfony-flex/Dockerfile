@@ -17,6 +17,7 @@ parameters:
 
 framework:
     trusted_proxies: '%env(TRUSTED_PROXIES)%'
+    trusted_headers: [ 'x-forwarded-host',  'x-forwarded-proto',  'x-forwarded-for' ]
 
 shopware:
     auto_update:
