@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-until mariadb -e 'select 1'; do sleep 1; done
+wait-for-mysql
 
 if [[ -n $CODESPACE_NAME ]]; then
   echo "Detected GitHub Codespace"

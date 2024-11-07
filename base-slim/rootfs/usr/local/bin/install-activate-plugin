@@ -1,0 +1,48 @@
+#!/usr/bin/env sh
+
+wait-for-mysql
+
+workspace_dir=""
+
+if [[ -d "/workspaces/" ]]; then
+    workspace_dir="/workspaces/"
+else
+    if [[ -d "/IdeaProjects/" ]]; then
+        workspace_dir="/IdeaProjects/"
+    else
+        echo "Cannot find workspace directory"
+        exit 0
+    fi
+fi
+
+
+files_in_workspace=$(ls "$workspace_dir")
+
+project_dir=""
+
+for file in $files_in_workspace; do
+    if [[ -d "${workspace_dir}${file}" ]]; then
+        project_dir="${workspace_dir}${file}"
+    fi
+done
+
+if [[ -z "${project_dir}" ]]; then
+    echo "Cannot find project directory in /workspaces/"
+    exit 0
+fi
+
+type=$(jq -r .type "${project_dir}/composer.json")
+name=$(jq -r .name "${project_dir}/composer.json")
+folderName=$(jq -r .name "${project_dir}/composer.json" | sed 's/\/t/T/' | sed 's/^f/F/')
+
+if [[ $type == "shopware-platform-plugin" ]]; then
+    cd /var/www/html
+    PROJECT_ROOT=/var/www/html/ shopware-cli extension build "/var/www/html/custom/plugins/${folderName}"
+    composer require "${name}"
+    php bin/console plugin:refresh
+    list_with_updates=$(php bin/console plugin:list --json | jq 'map(select(.installedAt == null)) | .[].name' -r)
+
+  for plugin in $list_with_updates; do
+    php bin/console plugin:install --activate "$plugin"
+  done
+fi
