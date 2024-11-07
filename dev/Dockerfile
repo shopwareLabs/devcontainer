@@ -24,9 +24,9 @@ RUN <<EOF
     find . -name 'node_modules' -type d -prune -print -exec rm -rf '{}' \;
 EOF
 
-COPY --chmod=555 <<EOF /shop/config/packages/override.yaml
+COPY --chmod=555 --chown=1000:1000 <<EOF /shop/config/packages/override.yaml
 parameters:
-    env(TRUSTED_PROXIES): ''
+    env(TRUSTED_PROXIES): 'REMOTE_ADDR'
 
 framework:
     trusted_proxies: '%env(TRUSTED_PROXIES)%'

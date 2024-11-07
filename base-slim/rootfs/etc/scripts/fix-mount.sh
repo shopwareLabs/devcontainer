@@ -29,11 +29,19 @@ if [[ -z "${project_dir}" ]]; then
     exit 0
 fi
 
-files_in_public=$(ls -l /var/www/html/ | grep -v "^total" | wc -l)
+type=$(jq -r .type "${project_dir}/composer.json")
+name=$(jq -r .name "${project_dir}/composer.json" | sed 's/\/t/T/' | sed 's/^f/F/')
 
-if [[ $files_in_public == 0 ]]; then
-    rm -rf /var/www/html
-    ln -s $project_dir /var/www/html
+if [[ $type == "shopware-platform-plugin" || $type == "shopware-bundle" ]]; then
+    rm -rf "/var/www/html/custom/plugins/$name"
+    ln -s $project_dir "/var/www/html/custom/plugins/$name"
 else
-    echo "Found files in /var/www/html/public, skipping linking"
+    files_in_public=$(ls -l /var/www/html/ | grep -v "^total" | wc -l)
+
+    if [[ $files_in_public == 0 ]]; then
+        rm -rf /var/www/html
+        ln -s $project_dir /var/www/html
+    else
+        echo "Found files in /var/www/html/public, skipping linking"
+    fi
 fi
