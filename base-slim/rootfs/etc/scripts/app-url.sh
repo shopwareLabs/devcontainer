@@ -12,6 +12,7 @@ if [[ -n $APP_URL ]]; then
   rm -rf /var/www/html/var/cache
 fi
 
-echo "Updated sales_channel_domain, sleeping now..."
-
-sleep infinity
+if [ -n "$1" ] && [ "$1" = "sleep" ]; then
+  echo "Updated sales_channel_domain, sleeping now..."
+  sleep infinity
+fi

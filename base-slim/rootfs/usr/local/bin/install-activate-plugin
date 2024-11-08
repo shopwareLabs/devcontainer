@@ -31,13 +31,16 @@ if [[ -z "${project_dir}" ]]; then
     exit 0
 fi
 
+# Fix again the APP_URL, at some point ENV are missing
+/etc/scripts/app-url.sh
+
 type=$(jq -r .type "${project_dir}/composer.json")
 name=$(jq -r .name "${project_dir}/composer.json")
 folderName=$(jq -r .name "${project_dir}/composer.json" | sed 's/\/t/T/' | sed 's/^f/F/')
 
 if [[ $type == "shopware-platform-plugin" ]]; then
     cd /var/www/html
-    PROJECT_ROOT=/var/www/html/ shopware-cli extension build "/var/www/html/custom/plugins/${folderName}"
+    SHOPWARE_PROJECT_ROOT=/var/www/html/ shopware-cli extension build "/var/www/html/custom/plugins/${folderName}"
     composer require "${name}"
     php bin/console plugin:refresh
     list_with_updates=$(php bin/console plugin:list --json | jq 'map(select(.installedAt == null)) | .[].name' -r)
