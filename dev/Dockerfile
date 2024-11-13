@@ -22,6 +22,14 @@ RUN <<EOF
     composer build:js:admin
     composer build:js:storefront || true
     find . -name 'node_modules' -type d -prune -print -exec rm -rf '{}' \;
+
+    if ! jq -e '.["require-dev"]["phpstan/phpdoc-parser"]' composer.json > /dev/null 2>&1; then
+        echo "phpstan/phpdoc-parser not found in require-dev, adding it..."
+
+        jq '.["require-dev"]["phpstan/phpdoc-parser"] = "~1"' composer.json > composer.json.tmp
+
+        mv composer.json.tmp composer.json
+    fi
 EOF
 
 COPY --chmod=555 --chown=1000:1000 <<EOF /shop/config/packages/override.yaml
