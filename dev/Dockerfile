@@ -9,19 +9,9 @@ RUN <<EOF
     apk add --no-cache bash jq
 
     git clone https://github.com/shopware/shopware.git -b v$SHOPWARE_VERSION --depth=1 /shop
-    rm -rf .github .git
-    composer config -d /shop version $SHOPWARE_VERSION
-
-    composer install --working-dir=/shop
-
-    export APP_URL=http://localhost:8000
-
     cd /shop
-    export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-    composer init:js
-    composer build:js:admin
-    composer build:js:storefront || true
-    find . -name 'node_modules' -type d -prune -print -exec rm -rf '{}' \;
+    rm -rf .github .git
+    composer config version $SHOPWARE_VERSION
 
     if ! jq -e '.["require-dev"]["phpstan/phpdoc-parser"]' composer.json > /dev/null 2>&1; then
         echo "phpstan/phpdoc-parser not found in require-dev, adding it..."
@@ -30,6 +20,16 @@ RUN <<EOF
 
         mv composer.json.tmp composer.json
     fi
+
+    composer install --working-dir=/shop
+
+    export APP_URL=http://localhost:8000
+
+    export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+    composer init:js
+    composer build:js:admin
+    composer build:js:storefront || true
+    find . -name 'node_modules' -type d -prune -print -exec rm -rf '{}' \;
 EOF
 
 COPY --chmod=555 --chown=1000:1000 <<EOF /shop/config/packages/override.yaml
