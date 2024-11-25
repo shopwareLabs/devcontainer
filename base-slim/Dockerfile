@@ -8,7 +8,7 @@ FROM ghcr.io/shyim/wolfi-php/nginx:${PHP_VERSION}
 ARG PHP_VERSION=8.3
 ARG TARGETARCH
 
-ENV DATABASE_URL=mysql://root:root@db/shopware \
+ENV DATABASE_URL=mysql://root:root@127.0.0.1/shopware \
     APP_SECRET=def00000bb5acb32b54ff8ee130270586eec0e878f7337dc7a837acc31d3ff00f93a56b595448b4b29664847dd51991b3314ff65aeeeb761a133b0ec0e070433bff08e48 \
     LOCK_DSN=flock \
     PHP_MEMORY_LIMIT=512M \
