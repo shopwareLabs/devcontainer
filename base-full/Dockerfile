@@ -36,6 +36,4 @@ RUN --mount=type=cache,id=apk-${TARGETARCH},sharing=locked,target=/var/cache/apk
     until mariadb-admin --no-defaults ping; do sleep 1; done
 
     sudo mariadb-admin --no-defaults --user=root password 'root'
-
-    echo -e "[client]\nuser=root\npassword=root\nhost=localhost" > /home/www-data/.my.cnf
 EOF
