@@ -82,6 +82,7 @@ RUN --mount=type=cache,id=apk-${TARGETARCH},sharing=locked,target=/var/cache/apk
         php-${PHP_VERSION}-opcache \
         php-${PHP_VERSION}-zstd \
         php-${PHP_VERSION}-redis \
+        php-${PHP_VERSION}-apcu \
         openssl-config \
         mariadb-11.2-client \
         jq
@@ -97,7 +98,7 @@ RUN --mount=type=cache,id=apk-${TARGETARCH},sharing=locked,target=/var/cache/apk
     echo 'www-data ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
     chsh -s /bin/bash www-data
 
-    echo -e "[client]\nuser=root\npassword=root\nhost=db" > /home/www-data/.my.cnf
+    echo -e "[client]\nuser=root\npassword=root\nhost=127.0.0.1" > /home/www-data/.my.cnf
 
     sudo rm -rf /var/www/html/public
 
