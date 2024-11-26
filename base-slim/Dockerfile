@@ -23,7 +23,7 @@ ENV DATABASE_URL=mysql://root:root@127.0.0.1/shopware \
     NPM_CONFIG_FUND=false \
     NPM_CONFIG_AUDIT=false \
     NPM_CONFIG_UPDATE_NOTIFIER=false \
-    MAILER_DSN=smtp://smtp:1025
+    MAILER_DSN=smtp://127.0.0.1:1025
 
 COPY --link rootfs /
 
