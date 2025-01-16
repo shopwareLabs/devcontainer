@@ -13,7 +13,7 @@ variable "currentShopwareVersion" {
 target "base-slim" {
     name = "base-slim-${replace(php, ".", "-")}"
     matrix = {
-        php = ["8.2", "8.3"]
+        php = ["8.2", "8.3", "8.4"]
     }
     args = {
         PHP_VERSION = php
@@ -26,7 +26,7 @@ target "base-slim" {
 target "base-full" {
     name = "base-full-${replace(php, ".", "-")}"
     matrix = {
-        php = ["8.2", "8.3"]
+        php = ["8.2", "8.3", "8.4"]
     }
     args = {
         PHP_VERSION = php
