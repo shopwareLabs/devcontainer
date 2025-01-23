@@ -26,6 +26,7 @@ RUN <<EOF
     export APP_URL=http://localhost:8000
 
     export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+    export NPM_CONFIG_ENGINE_STRICT=false
     composer init:js
     composer build:js:admin
     composer build:js:storefront || true
