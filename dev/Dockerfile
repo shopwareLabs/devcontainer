@@ -77,7 +77,7 @@ EOF
 
 FROM base
 
-COPY --from=friendsofshopware/shopware-cli /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli
+COPY --from=shopware/shopware-cli /usr/local/bin/shopware-cli /usr/local/bin/shopware-cli
 COPY --from=setup /var/www/html /var/www/html
 
 ARG SHOPWARE_VERSION=6.5.8.12

@@ -46,7 +46,7 @@ target "symfony-flex" {
     }
     contexts = {
         base = "docker-image://${image}/base-full:${currentPHPVersion}"
-        shopware-cli = "docker-image://friendsofshopware/shopware-cli:latest-php-${currentPHPVersion}"
+        shopware-cli = "docker-image://shopware/shopware-cli:latest-php-${currentPHPVersion}"
     }
     context = "symfony-flex"
     tags = [ "${image}/symfony-flex:${regex("^[0-9]+\\.[0-9]+\\.[0-9]+", currentShopwareVersion)}-${currentPHPVersion}" ]
@@ -60,7 +60,7 @@ target "dev" {
     }
     contexts = {
         base = "docker-image://${image}/base-full:${currentPHPVersion}"
-        shopware-cli = "docker-image://friendsofshopware/shopware-cli:latest-php-${currentPHPVersion}"
+        shopware-cli = "docker-image://shopware/shopware-cli:latest-php-${currentPHPVersion}"
     }
     context = "dev"
     tags = [ "${image}/contribute:${regex("^[0-9]+\\.[0-9]+\\.[0-9]+", currentShopwareVersion)}-${currentPHPVersion}" ]
