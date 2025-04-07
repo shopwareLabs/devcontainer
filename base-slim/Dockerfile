@@ -77,12 +77,17 @@ RUN --mount=type=cache,id=apk-${TARGETARCH},sharing=locked,target=/var/cache/apk
         php-${PHP_VERSION}-bz2 \
         php-${PHP_VERSION}-gmp \
         php-${PHP_VERSION}-soap \
+        php-${PHP_VERSION}-ftp \
         php-${PHP_VERSION}-zip \
         php-${PHP_VERSION}-sodium \
         php-${PHP_VERSION}-opcache \
         php-${PHP_VERSION}-zstd \
         php-${PHP_VERSION}-redis \
         php-${PHP_VERSION}-apcu \
+        php-${PHP_VERSION}-pcov \
+        php-${PHP_VERSION}-tideways \
+        php-${PHP_VERSION}-blackfire \
+        php-${PHP_VERSION}-xdebug \
         openssl-config \
         mariadb-11.2-client \
         jq
@@ -103,6 +108,13 @@ RUN --mount=type=cache,id=apk-${TARGETARCH},sharing=locked,target=/var/cache/apk
     sudo rm -rf /var/www/html/public
 
     chown -R 1000:1000 /var/www /home/www-data
+
+    echo -e "blackfire.agent_socket=tcp://blackfire:8307" | sudo tee -a /etc/php/conf.d/blackfire.ini
+
+    mv /etc/php/conf.d/blackfire.ini /etc/php/conf.d/blackfire.disabled
+    mv /etc/php/conf.d/xdebug.ini /etc/php/conf.d/xdebug.disabled
+    mv /etc/php/conf.d/tideways.ini /etc/php/conf.d/tideways.disabled
+    mv /etc/php/conf.d/pcov.ini /etc/php/conf.d/pcov.disabled
 EOF
 
 ENTRYPOINT ["/entrypoint"]

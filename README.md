@@ -26,3 +26,16 @@ Devcontainers are a feature of Visual Studio Code that allow you to define a dev
 	"onCreateCommand": "php bin/console plugin:refresh && php bin/console plugin:install --activate FroshTools"
 }
 ```
+
+## Enabling PHP Profiler
+
+By default any PHP Profiler is disabled, you can set the environment variable `PHP_PROFILER` to enable one of them. Supported are:
+
+- Blackfire
+- Xdebug
+- Tideways
+- Pcov
+
+All of them are conflicting each other, therefore it's only possible to enable one of them at once.
+
+Blackfire and Tideways will require a sidecar with the daemon running. Blackfire expects a `blackfire` service in the docker-compose file. Tideways expects a `TIDEWAYS_CONNECTION` environment variable to be set with the connection string to the daemon.

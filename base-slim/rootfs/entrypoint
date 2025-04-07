@@ -4,4 +4,13 @@ set -e
 
 sh /etc/scripts/fix-mount.sh
 
+if [ -n "$PHP_PROFILER" ]; then
+    if [ -f "/etc/php/conf.d/${PHP_PROFILER}.disabled" ]; then
+        sudo mv "/etc/php/conf.d/${PHP_PROFILER}.disabled" "/etc/php/conf.d/${PHP_PROFILER}.ini"
+        echo "Enabled PHP Profiler: $PHP_PROFILER"
+    else
+        echo "Warning: PHP Profiler '$PHP_PROFILER' configuration not found."
+    fi
+fi
+
 exec $@
