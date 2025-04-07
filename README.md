@@ -39,3 +39,7 @@ By default any PHP Profiler is disabled, you can set the environment variable `P
 All of them are conflicting each other, therefore it's only possible to enable one of them at once.
 
 Blackfire and Tideways will require a sidecar with the daemon running. Blackfire expects a `blackfire` service in the docker-compose file. Tideways expects a `TIDEWAYS_CONNECTION` environment variable to be set with the connection string to the daemon.
+
+## Support
+
+We will rebuild only Base images only for all supported PHP versions, and for Shopware versions also only supported ones

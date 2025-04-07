@@ -8,7 +8,7 @@ RUN <<EOF
 
     apk add --no-cache bash jq
 
-    git clone https://github.com/shopware/shopware.git -b v$SHOPWARE_VERSION --depth=1 /shop
+    git clone -q https://github.com/shopware/shopware.git -b v$SHOPWARE_VERSION --depth=1 /shop
     cd /shop
     rm -rf .github .git
     composer config version $SHOPWARE_VERSION
@@ -21,13 +21,14 @@ RUN <<EOF
         mv composer.json.tmp composer.json
     fi
 
-    composer install --working-dir=/shop
+    composer install
 
     export APP_URL=http://localhost:8000
 
     export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
     export NPM_CONFIG_ENGINE_STRICT=false
-    composer init:js
+    npm install --prefix src/Administration/Resources/app/administration --no-audit --no-fund
+    npm install --prefix src/Storefront/Resources/app/storefront --no-audit --no-fund
     composer build:js:admin
     composer build:js:storefront || true
     find . -name 'node_modules' -type d -prune -print -exec rm -rf '{}' \;
