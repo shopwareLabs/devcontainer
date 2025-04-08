@@ -13,3 +13,5 @@ SHOPWARE_VERSION=${1:-*}
 
 composer create-project shopware/production:$SHOPWARE_VERSION . --no-interaction --prefer-dist --no-progress
 composer require shopware/docker-dev --no-interaction
+
+echo "Project created successfully. Run 'make up' to start the containers and 'make setup' to initialize the project."
