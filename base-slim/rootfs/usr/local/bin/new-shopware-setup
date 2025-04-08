@@ -1,0 +1,15 @@
+#/usr/bin/env bash
+
+set -e
+
+if [ "$(ls -A /var/www/html)" ]; then
+	echo "Error: /var/www/html is not empty." >&2
+	exit 1
+fi
+
+cd /var/www/html
+
+SHOPWARE_VERSION=${1:-*}
+
+composer create-project shopware/production:$SHOPWARE_VERSION . --no-interaction --prefer-dist --no-progress
+composer require shopware/docker-dev --no-interaction
