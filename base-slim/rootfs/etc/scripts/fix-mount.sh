@@ -8,7 +8,6 @@ else
     if [[ -d "/IdeaProjects/" ]]; then
         workspace_dir="/IdeaProjects/"
     else
-        echo "Cannot find workspace directory"
         exit 0
     fi
 fi
