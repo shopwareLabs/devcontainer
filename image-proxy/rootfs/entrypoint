@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+set -e
+
+sed -i "s|REMOTE_SERVER_HOST|$REMOTE_SERVER_HOST|g" /etc/nginx/nginx.conf
+
+# Execute the command passed to the script
+exec "$@"

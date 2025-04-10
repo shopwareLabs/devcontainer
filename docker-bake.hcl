@@ -66,3 +66,9 @@ target "dev" {
     tags = [ "${image}/contribute:${regex("^[0-9]+\\.[0-9]+\\.[0-9]+", currentShopwareVersion)}-${currentPHPVersion}" ]
     platforms = ["linux/amd64", "linux/arm64"]
 }
+
+target "image-proxy" {
+    context = "image-proxy"
+    tags = [ "${image}/image-proxy" ]
+    platforms = ["linux/amd64", "linux/arm64"]
+}
