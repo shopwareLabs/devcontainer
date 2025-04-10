@@ -1,3 +1,2 @@
 nginx: /usr/sbin/nginx
 php-fpm: /usr/sbin/php-fpm
-maintenance: /etc/scripts/app-url.sh sleep
