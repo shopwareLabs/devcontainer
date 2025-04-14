@@ -62,7 +62,6 @@ jobs:
         id: cache
         with:
           key: wolfi-apk-cache
-          save-always: true
           path: |
             var-cache-apk-arm64
             var-cache-apk-amd64
@@ -109,7 +108,6 @@ jobs:
         id: cache
         with:
           key: wolfi-apk-cache-full
-          save-always: true
           path: |
             var-cache-apk-arm64
             var-cache-apk-amd64
