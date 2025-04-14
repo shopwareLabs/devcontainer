@@ -13,4 +13,11 @@ if [ -n "$PHP_PROFILER" ]; then
     fi
 fi
 
+if ! sudo ping -c 1 database > /dev/null 2>&1; then
+    MY_CNF="$HOME/.my.cnf"
+    if [ -f "$MY_CNF" ]; then
+        sed -i 's/host\s*=\s*database/host = 127.0.0.1/g' "$MY_CNF"
+    fi
+fi
+
 exec $@
