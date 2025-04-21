@@ -12,6 +12,8 @@ ENV DATABASE_URL=mysql://root:root@127.0.0.1/shopware \
     APP_SECRET=def00000bb5acb32b54ff8ee130270586eec0e878f7337dc7a837acc31d3ff00f93a56b595448b4b29664847dd51991b3314ff65aeeeb761a133b0ec0e070433bff08e48 \
     LOCK_DSN=flock \
     PHP_MEMORY_LIMIT=512M \
+    PHP_POST_MAX_SIZE=128M \
+    PHP_UPLOAD_MAX_FILESIZE=128M \
     COMPOSER_ROOT_VERSION=1.0.0 \
     APP_URL=http://localhost:8000 \
     NPM_CONFIG_ENGINE_STRICT=false \
@@ -115,6 +117,9 @@ RUN --mount=type=cache,id=apk-${TARGETARCH},sharing=locked,target=/var/cache/apk
     mv /etc/php/conf.d/xdebug.ini /etc/php/conf.d/xdebug.disabled
     mv /etc/php/conf.d/tideways.ini /etc/php/conf.d/tideways.disabled
     mv /etc/php/conf.d/pcov.ini /etc/php/conf.d/pcov.disabled
+
+    sed -i 's/client_max_body_size 8M;/client_max_body_size 128M;/' /etc/nginx/nginx.conf
+
 EOF
 
 ENTRYPOINT ["/entrypoint"]
