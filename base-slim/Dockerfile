@@ -122,6 +122,8 @@ RUN --mount=type=cache,id=apk-${TARGETARCH},sharing=locked,target=/var/cache/apk
 
 EOF
 
+COPY --from=shopware/shopware-cli:bin /shopware-cli /usr/local/bin/shopware-cli
+
 ENTRYPOINT ["/entrypoint"]
 CMD ["/usr/bin/hivemind", "/etc/Procfile"]
 
