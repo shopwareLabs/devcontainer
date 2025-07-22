@@ -15,7 +15,7 @@ const customSort = (a, b) => {
 };
 
 for (const swVersion of Object.keys(swToPHP).sort(customSort)) {
-    if ((swVersion.indexOf('6.6') !== 0 && swVersion.indexOf('6.5.8') !== 0) || swVersion.indexOf('RC') !== -1) {
+    if ((swVersion.indexOf('6.7') !== 0 && swVersion.indexOf('6.6') !== 0 && swVersion.indexOf('6.5.8') !== 0) || swVersion.indexOf('RC') !== -1) {
         continue;
     }
 
