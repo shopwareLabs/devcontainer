@@ -111,6 +111,9 @@ RUN --mount=type=cache,id=apk-${TARGETARCH},sharing=locked,target=/var/cache/apk
 
     chown -R 1000:1000 /var/www /home/www-data
 
+    mkdir -p /commandhistory
+    chown -R www-data:www-data /commandhistory
+
     echo -e "blackfire.agent_socket=tcp://blackfire:8307" | sudo tee -a /etc/php/conf.d/blackfire.ini
 
     mv /etc/php/conf.d/blackfire.ini /etc/php/conf.d/blackfire.disabled

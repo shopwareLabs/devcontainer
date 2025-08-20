@@ -20,4 +20,12 @@ if ! sudo ping -c 1 database > /dev/null 2>&1; then
     fi
 fi
 
+if [ -n "$RW_DIRECTORIES" ]; then
+    for dir in $RW_DIRECTORIES; do
+        sudo chown -R "www-data:www-data" "$dir"
+    done
+fi
+
+sudo chown -R www-data:www-data /commandhistory
+
 exec $@
